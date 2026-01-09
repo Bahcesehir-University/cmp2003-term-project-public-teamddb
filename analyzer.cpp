@@ -1,15 +1,5 @@
 #include "analyzer.h"
 
-static bool isValidNum(const std::string &str) {
-	if (str.empty())
-		return false;
-
-	char *end = nullptr;
-	std::strtof(str.c_str(), &end);
-
-	return (end != str.c_str() && *end == '\0');
-}
-
 static int parseHour(const std::string &rawDate) {
 	if (rawDate.empty())
 		return -1;
@@ -59,8 +49,6 @@ bool TripAnalyzer::parseRow(const std::string &line, std::string &pickupZoneId, 
 	if (keys.size() >= 6) {
 		rawZone = keys[1];
 		rawDate = keys[3];
-		if (!isValidNum(keys[4]) || !isValidNum(keys[5]))
-			return false;
 	} else if (keys.size() == 3) {
 		rawZone = keys[1];
 		rawDate = keys[2];
