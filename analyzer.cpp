@@ -68,6 +68,9 @@ bool TripAnalyzer::parseRow(const std::string &line, std::string &pickupZoneId, 
 }
 
 void TripAnalyzer::ingestFile(const std::string &csvPath) {
+	std::ios::sync_with_stdio(false);
+	std::cin.tie(NULL);
+
 	std::ifstream file(csvPath);
 	if (!file.is_open())
 		return;
