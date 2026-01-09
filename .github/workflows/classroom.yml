@@ -1,0 +1,110 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: The Empty File Test
+      id: the-empty-file-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: The Empty File Test
+        setup-command: make
+        command: make A1
+        timeout: 2
+        max-score: 5
+    - name: The ”Dirty Data” Test
+      id: the-dirty-data-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: The ”Dirty Data” Test
+        setup-command: make
+        command: make A2
+        timeout: 2
+        max-score: 5
+    - name: Boundary Hours
+      id: boundary-hours
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Boundary Hours
+        setup-command: make
+        command: make A3
+        timeout: 2
+        max-score: 5
+    - name: The”Tie-Breaker” Test
+      id: the-tie-breaker-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: The”Tie-Breaker” Test
+        setup-command: make
+        command: make B1
+        timeout: 2
+        max-score: 10
+    - name: The ”Single Hit” Test
+      id: the-single-hit-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: The ”Single Hit” Test
+        setup-command: make
+        command: make B1
+        timeout: 2
+        max-score: 5
+    - name: Case Sensitivity
+      id: case-sensitivity
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Case Sensitivity
+        setup-command: make
+        command: make B3
+        timeout: 2
+        max-score: 5
+    - name: The”High Collision” Test
+      id: the-high-collision-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: The”High Collision” Test
+        setup-command: make
+        command: make C1
+        timeout: 10
+        max-score: 10
+    - name: The ”High Cardinality” Test
+      id: the-high-cardinality-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: The ”High Cardinality” Test
+        setup-command: make
+        command: make C2
+        timeout: 10
+        max-score: 10
+    - name: The Volume Test
+      id: the-volume-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: The Volume Test
+        setup-command: make
+        command: make C3
+        timeout: 10
+        max-score: 15
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        THE-EMPTY-FILE-TEST_RESULTS: "${{steps.the-empty-file-test.outputs.result}}"
+        THE-DIRTY-DATA-TEST_RESULTS: "${{steps.the-dirty-data-test.outputs.result}}"
+        BOUNDARY-HOURS_RESULTS: "${{steps.boundary-hours.outputs.result}}"
+        THE-TIE-BREAKER-TEST_RESULTS: "${{steps.the-tie-breaker-test.outputs.result}}"
+        THE-SINGLE-HIT-TEST_RESULTS: "${{steps.the-single-hit-test.outputs.result}}"
+        CASE-SENSITIVITY_RESULTS: "${{steps.case-sensitivity.outputs.result}}"
+        THE-HIGH-COLLISION-TEST_RESULTS: "${{steps.the-high-collision-test.outputs.result}}"
+        THE-HIGH-CARDINALITY-TEST_RESULTS: "${{steps.the-high-cardinality-test.outputs.result}}"
+        THE-VOLUME-TEST_RESULTS: "${{steps.the-volume-test.outputs.result}}"
+      with:
+        runners: the-empty-file-test,the-dirty-data-test,boundary-hours,the-tie-breaker-test,the-single-hit-test,case-sensitivity,the-high-collision-test,the-high-cardinality-test,the-volume-test
