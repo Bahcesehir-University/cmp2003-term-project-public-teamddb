@@ -30,31 +30,37 @@ bool TripAnalyzer::parseRow(const std::string &line, std::string &pickupZoneId, 
 	if (line.rfind("TripID", 0) == 0)
 		return false;
 
-	std::vector<std::string> keys;
-	keys.reserve(6);
-
-	size_t start = 0;
-	size_t end = line.find(',');
-	while (end != std::string::npos) {
-		keys.push_back(line.substr(start, end - start));
-		start = end + 1;
-		end = line.find(',', start);
+	int totalCommas = 0;
+	for (char c : line) {
+		if (c == ',') totalCommas++;
 	}
-	keys.push_back(line.substr(start));
-	if (keys.empty())
-		return false;
+	int totalCols = totalCommas + 1;
+
+	size_t c1 = line.find(',');
+	if (c1 == std::string::npos) return false;
+	size_t c2 = line.find(',', c1 + 1);
 
 	std::string rawZone;
 	std::string rawDate;
-	if (keys.size() >= 6) {
-		rawZone = keys[1];
-		rawDate = keys[3];
-	} else if (keys.size() == 3) {
-		rawZone = keys[1];
-		rawDate = keys[2];
+
+	if (totalCols >= 6) {
+		if (c2 == std::string::npos) return false;
+		size_t c3 = line.find(',', c2 + 1);
+		if (c3 == std::string::npos) return false;
+		size_t c4 = line.find(',', c3 + 1);
+		
+		rawZone = line.substr(c1 + 1, c2 - c1 - 1);
+		rawDate = line.substr(c3 + 1, (c4 == std::string::npos ? line.length() : c4) - c3 - 1);
+	} else if (totalCols == 3) {
+		if (c2 == std::string::npos) return false;
+		size_t c3 = line.find(',', c2 + 1);
+
+		rawZone = line.substr(c1 + 1, c2 - c1 - 1);
+		rawDate = line.substr(c2 + 1, (c3 == std::string::npos ? line.length() : c3) - c2 - 1);
 	} else {
 		return false;
 	}
+
 	if (rawZone.empty() || rawDate.empty())
 		return false;
 
